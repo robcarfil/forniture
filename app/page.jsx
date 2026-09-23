@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const checks = [
   "Build statica con Next.js",
   "Runtime Nginx leggero",
@@ -6,6 +10,8 @@ const checks = [
 ];
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <main className="shell">
       <section className="hero">
@@ -27,7 +33,28 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <button className="open-modal" type="button" onClick={() => setIsModalOpen(true)}>
+          Apri modal
+        </button>
       </section>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" role="presentation" onClick={() => setIsModalOpen(false)}>
+          <section
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="modal-title">Messaggio</h2>
+            <p>ciao</p>
+            <button className="close-modal" type="button" onClick={() => setIsModalOpen(false)}>
+              Chiudi
+            </button>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

@@ -101,3 +101,47 @@ h2 {
   background: var(--accent);
   flex: 0 0 auto;
 }
+
+.open-modal,
+.close-modal {
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 11px 16px;
+}
+
+.open-modal {
+  margin-top: 22px;
+}
+
+.open-modal:hover,
+.close-modal:hover {
+  filter: brightness(0.92);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgb(22 32 51 / 42%);
+}
+
+.modal {
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: 0 20px 60px rgb(22 32 51 / 22%);
+  padding: 26px;
+}
+
+.modal p {
+  margin: 18px 0 24px;
+  font-size: 1.2rem;
+}
