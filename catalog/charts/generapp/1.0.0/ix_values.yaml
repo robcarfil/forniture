@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/robertoformentin/generapp
+  repository: 100.119.243.68:30142/gestore/generapp
   tag: "1.0.0"
   pullPolicy: IfNotPresent
 

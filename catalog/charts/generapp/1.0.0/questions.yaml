@@ -36,7 +36,7 @@ questions:
           schema:
             type: string
             required: true
-            default: "ghcr.io/robertoformentin/generapp"
+            default: "100.119.243.68:30142/gestore/generapp"
         - variable: tag
           label: "Tag"
           description: "Tag immagine da distribuire"

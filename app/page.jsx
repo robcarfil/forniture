@@ -1,8 +1,8 @@
 const checks = [
   "Build statica con Next.js",
   "Runtime Nginx leggero",
-  "Deploy Kubernetes via Helm",
-  "Configurazione TrueNAS tramite questions.yaml"
+  "Deploy TrueNAS via Compose",
+  "Immagine pubblicabile su Gitea"
 ];
 
 export default function Home() {
@@ -12,8 +12,8 @@ export default function Home() {
         <p className="eyebrow">TrueNAS SCALE App</p>
         <h1>GenerApp</h1>
         <p className="lead">
-          Applicazione web containerizzata, pronta per essere pubblicata in un
-          catalogo TrueNAS SCALE basato su Helm.
+          Applicazione web containerizzata, pronta per essere installata su
+          TrueNAS SCALE tramite Docker Compose.
         </p>
       </section>
 
