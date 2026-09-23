@@ -1,0 +1,17 @@
+{{- if and .Values.storage.enabled (not .Values.storage.existingClaim) -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "generapp.fullname" . }}-data
+  labels:
+    {{- include "generapp.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.storage.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+  {{- if .Values.storage.storageClassName }}
+  storageClassName: {{ .Values.storage.storageClassName | quote }}
+  {{- end }}
+{{- end }}

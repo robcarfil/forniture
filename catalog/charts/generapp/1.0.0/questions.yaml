@@ -1,0 +1,273 @@
+groups:
+  - name: "Container Image"
+    description: "Immagine Docker usata dall'applicazione"
+  - name: "Networking"
+    description: "Porte e modalità di esposizione"
+  - name: "Application"
+    description: "Variabili ambiente dell'app"
+  - name: "Storage"
+    description: "Storage persistente opzionale"
+  - name: "Ingress"
+    description: "Ingresso HTTP opzionale"
+  - name: "Resources"
+    description: "Richieste e limiti CPU/memoria"
+
+portals:
+  web_portal:
+    protocols:
+      - "$kubernetes-resource_configmap_portal_protocol"
+    host:
+      - "$node_ip"
+    ports:
+      - "$variable-service.port"
+    path: "/"
+
+questions:
+  - variable: image
+    label: "Container Image"
+    group: "Container Image"
+    schema:
+      type: dict
+      required: true
+      attrs:
+        - variable: repository
+          label: "Repository"
+          description: "Repository completo dell'immagine Docker"
+          schema:
+            type: string
+            required: true
+            default: "ghcr.io/robertoformentin/generapp"
+        - variable: tag
+          label: "Tag"
+          description: "Tag immagine da distribuire"
+          schema:
+            type: string
+            required: true
+            default: "1.0.0"
+        - variable: pullPolicy
+          label: "Pull Policy"
+          schema:
+            type: string
+            required: true
+            default: "IfNotPresent"
+            enum:
+              - value: "IfNotPresent"
+                description: "Scarica l'immagine solo se non presente"
+              - value: "Always"
+                description: "Scarica sempre l'immagine"
+              - value: "Never"
+                description: "Usa solo immagini già presenti sul nodo"
+
+  - variable: containerPort
+    label: "Container Port"
+    group: "Networking"
+    schema:
+      type: int
+      required: true
+      default: 8080
+      min: 1
+      max: 65535
+
+  - variable: service
+    label: "Service"
+    group: "Networking"
+    schema:
+      type: dict
+      required: true
+      attrs:
+        - variable: type
+          label: "Service Type"
+          schema:
+            type: string
+            required: true
+            default: "NodePort"
+            enum:
+              - value: "NodePort"
+                description: "Espone l'app su una porta del nodo TrueNAS"
+              - value: "LoadBalancer"
+                description: "Usa un load balancer Kubernetes"
+              - value: "ClusterIP"
+                description: "Espone l'app solo dentro il cluster"
+        - variable: port
+          label: "Service Port"
+          schema:
+            type: int
+            required: true
+            default: 8080
+            min: 1
+            max: 65535
+        - variable: nodePort
+          label: "NodePort"
+          description: "Usato solo quando Service Type è NodePort"
+          schema:
+            type: int
+            required: false
+            default: 30080
+            min: 30000
+            max: 32767
+
+  - variable: env
+    label: "Environment Variables"
+    group: "Application"
+    schema:
+      type: list
+      default:
+        - name: "APP_NAME"
+          value: "GenerApp"
+      items:
+        - variable: envItem
+          label: "Environment Variable"
+          schema:
+            type: dict
+            attrs:
+              - variable: name
+                label: "Name"
+                schema:
+                  type: string
+                  required: true
+              - variable: value
+                label: "Value"
+                schema:
+                  type: string
+                  required: false
+
+  - variable: storage
+    label: "Storage"
+    group: "Storage"
+    schema:
+      type: dict
+      required: true
+      attrs:
+        - variable: enabled
+          label: "Enable Persistent Storage"
+          schema:
+            type: boolean
+            default: false
+        - variable: mountPath
+          label: "Mount Path"
+          schema:
+            type: string
+            required: true
+            default: "/data"
+        - variable: size
+          label: "PVC Size"
+          schema:
+            type: string
+            required: true
+            default: "1Gi"
+        - variable: storageClassName
+          label: "Storage Class"
+          description: "Lascia vuoto per usare la storage class predefinita"
+          schema:
+            type: string
+            required: false
+            default: ""
+        - variable: existingClaim
+          label: "Existing PVC"
+          description: "Nome di un PVC esistente da montare al posto di crearne uno"
+          schema:
+            type: string
+            required: false
+            default: ""
+
+  - variable: ingress
+    label: "Ingress"
+    group: "Ingress"
+    schema:
+      type: dict
+      required: true
+      attrs:
+        - variable: enabled
+          label: "Enable Ingress"
+          schema:
+            type: boolean
+            default: false
+        - variable: className
+          label: "Ingress Class"
+          schema:
+            type: string
+            required: false
+            default: ""
+        - variable: hosts
+          label: "Hosts"
+          schema:
+            type: list
+            default:
+              - host: "generapp.local"
+                paths:
+                  - path: "/"
+                    pathType: "Prefix"
+            items:
+              - variable: hostItem
+                label: "Host"
+                schema:
+                  type: dict
+                  attrs:
+                    - variable: host
+                      label: "Host"
+                      schema:
+                        type: string
+                        required: true
+                    - variable: paths
+                      label: "Paths"
+                      schema:
+                        type: list
+                        default:
+                          - path: "/"
+                            pathType: "Prefix"
+                        items:
+                          - variable: pathItem
+                            label: "Path"
+                            schema:
+                              type: dict
+                              attrs:
+                                - variable: path
+                                  label: "Path"
+                                  schema:
+                                    type: string
+                                    required: true
+                                    default: "/"
+                                - variable: pathType
+                                  label: "Path Type"
+                                  schema:
+                                    type: string
+                                    required: true
+                                    default: "Prefix"
+
+  - variable: resources
+    label: "Resources"
+    group: "Resources"
+    schema:
+      type: dict
+      required: true
+      attrs:
+        - variable: requests
+          label: "Requests"
+          schema:
+            type: dict
+            attrs:
+              - variable: cpu
+                label: "CPU Request"
+                schema:
+                  type: string
+                  default: "25m"
+              - variable: memory
+                label: "Memory Request"
+                schema:
+                  type: string
+                  default: "64Mi"
+        - variable: limits
+          label: "Limits"
+          schema:
+            type: dict
+            attrs:
+              - variable: cpu
+                label: "CPU Limit"
+                schema:
+                  type: string
+                  default: "250m"
+              - variable: memory
+                label: "Memory Limit"
+                schema:
+                  type: string
+                  default: "256Mi"

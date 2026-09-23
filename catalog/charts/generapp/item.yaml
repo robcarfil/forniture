@@ -1,0 +1,9 @@
+categories:
+  - productivity
+  - generic
+icon_url: "https://raw.githubusercontent.com/robertoformentin/truenas-generapp-catalog/main/catalog/charts/generapp/icon.png"
+screenshots: []
+tags:
+  - web
+  - nextjs
+  - nginx
