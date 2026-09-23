@@ -1,6 +1,6 @@
 services:
   generapp:
-    image: ghcr.io/robertoformentin/generapp:1.0.0
+    image: 100.119.243.68:30142/gestore/generapp:1.0.0
     container_name: generapp
     restart: unless-stopped
     ports:
