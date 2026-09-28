@@ -1,60 +1,21 @@
 "use client";
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
-
-const checks = [
-  "Build statica con Next.js",
-  "Runtime Nginx leggero",
-  "Deploy TrueNAS via Compose",
-  "Immagine pubblicabile su Gitea"
-];
+const nav = [["▣", "Conti"], ["▤", "Report"]];
+const activities = [["Marco Bianchi", "Nuovo contratto firmato", "Oggi, 10:42", "green"], ["Laura Rossi", "Demo prodotto programmata", "Oggi, 09:18", "blue"], ["Studio Ferri", "Pagamento ricevuto", "Ieri, 16:35", "orange"], ["Andrea Conti", "Contatto aggiornato", "Ieri, 14:20", "purple"]];
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  return (
-    <main className="shell">
-      <section className="hero">
-        <p className="eyebrow">TrueNAS SCALE App</p>
-        <h1>GenerApp</h1>
-        <p className="lead">
-          Applicazione web containerizzata, pronta per essere installata su
-          TrueNAS SCALE tramite Docker Compose.
-        </p>
-      </section>
-
-      <section className="panel" aria-label="Stato deploy">
-        <h2>Pronta al deploy</h2>
-        <div className="grid">
-          {checks.map((item) => (
-            <article key={item} className="card">
-              <span className="status" aria-hidden="true" />
-              <p>{item}</p>
-            </article>
-          ))}
-        </div>
-        <button className="open-modal" type="button" onClick={() => setIsModalOpen(true)}>
-          Apri modal
-        </button>
-      </section>
-
-      {isModalOpen && (
-        <div className="modal-backdrop" role="presentation" onClick={() => setIsModalOpen(false)}>
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h2 id="modal-title">Messaggio</h2>
-            <p>ciao</p>
-            <button className="close-modal" type="button" onClick={() => setIsModalOpen(false)}>
-              Chiudi
-            </button>
-          </section>
-        </div>
-      )}
-    </main>
-  );
+  const [user, setUser] = useState(null); const [brand, setBrand] = useState({ logo: "", name: "GenerApp" }); const [setup, setSetup] = useState(false); const [login, setLogin] = useState({ username: "", password: "" }); const [users, setUsers] = useState([]); const [message, setMessage] = useState(""); const [userMenuOpen, setUserMenuOpen] = useState(false);
+  async function json(response) { const text = await response.text(); try { return JSON.parse(text); } catch { throw new Error(`API ${response.status}: ${text || "risposta vuota"}`); } }
+  async function load() { try { const setupData = await json(await fetch("/api/auth/setup")); setSetup(setupData.needsSetup); if (setupData.needsSetup) return; const data = await json(await fetch("/api/auth/me")); setUser(data.user); if (data.user?.role === "admin") setUsers((await json(await fetch("/api/users"))).users || []); const layout = await json(await fetch("/api/settings/layout")); if (layout.settings) setBrand({ logo: layout.settings.brand_logo || "", name: layout.settings.brand_name?.trim() || "GenerApp" }); } catch (error) { setMessage(error.message); } }
+  useEffect(() => { load(); }, []);
+  async function signIn(event) { event.preventDefault(); try { const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(login) }); const data = await json(response); if (!response.ok) return setMessage(data.error); setMessage(""); setLogin({ username: "", password: "" }); load(); } catch (error) { setMessage(error.message); } }
+  async function createUser(event) { event.preventDefault(); const form = new FormData(event.currentTarget); const response = await fetch("/api/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(form)) }); const data = await response.json(); setMessage(data.error || "Utente creato"); if (response.ok) { event.currentTarget.reset(); load(); } }
+  async function signOut() { await fetch("/api/auth/logout", { method: "POST" }); setUser(null); }
+  async function createFirstAdmin(event) { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); const response = await fetch("/api/auth/setup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); const result = await json(response); if (!response.ok) return setMessage(result.error); setSetup(false); setLogin({ username: data.username, password: "" }); setMessage("Amministratore creato. Ora accedi con le nuove credenziali."); }
+  if (setup) return <main className="auth-shell"><form className="auth-card" onSubmit={createFirstAdmin}><p className="eyebrow">Prima configurazione</p><h1>Crea amministratore</h1><p>Non esistono ancora utenti. Crea il primo amministratore dell’app.</p><label>Username<input name="username" defaultValue="admin" required /></label><label>Password<input name="password" type="password" minLength="8" required /></label>{message && <p className="error">{message}</p>}<button type="submit">Crea amministratore</button></form></main>;
+  if (!user) return <main className="auth-shell"><form className="auth-card" onSubmit={signIn}><div className="brand">{brand.logo ? <img className="brand-logo" src={brand.logo} alt="" /> : <span className="brand-mark">G</span>}<span>{brand.name}</span></div><p className="eyebrow">Area riservata</p><h1>Bentornato</h1><p>Accedi al tuo spazio di lavoro.</p><label>Username<input value={login.username} onChange={(e) => setLogin({ ...login, username: e.target.value })} required /></label><label>Password<input type="password" value={login.password} onChange={(e) => setLogin({ ...login, password: e.target.value })} required /></label>{message && <p className="error">{message}</p>}<button type="submit">Accedi</button></form></main>;
+  return <main className="crm-shell"><aside className="sidebar"><div className="brand">{brand.logo ? <img className="brand-logo" src={brand.logo} alt="" /> : <span className="brand-mark">G</span>}<span>{brand.name}</span></div><div className="workspace"><span className="workspace-dot" /> Workspace principale <span>⌄</span></div><p className="nav-label">MENU PRINCIPALE</p><nav>{nav.map(([icon, label], index) => <button className={index === 0 ? "active" : ""} key={label}><i>{icon}</i>{label}</button>)}</nav><p className="nav-label">GESTIONE</p><nav><button><i>⚙</i>Impostazioni</button></nav><div className="sidebar-bottom"><div className="mini-avatar">{user.username[0].toUpperCase()}</div><div><strong>{user.username}</strong><small>{user.role === "admin" ? "Amministratore" : "Utente"}</small><small className="app-version">v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}</small></div><button className="logout" onClick={signOut}>↪</button></div></aside><section className="content"><header className="topbar"><button className="mobile-menu">☰</button><div className="current-page-title">Conti</div><div className="top-actions"><button>＋ <span>Nuovo</span></button><button className="icon-button">♧</button><button className="icon-button">♢<em>3</em></button><div className="user-menu"><button className="top-avatar" aria-label="Apri menu utente" aria-expanded={userMenuOpen} onClick={() => setUserMenuOpen(!userMenuOpen)}>{user.username[0].toUpperCase()}</button>{userMenuOpen && <div className="user-dropdown"><div className="dropdown-profile"><div className="dropdown-avatar">{user.username[0].toUpperCase()}</div><div><strong>{user.username}</strong><small>{user.role === "admin" ? "Amministratore" : "Utente"}</small></div></div><div className="dropdown-divider"/><button className="dropdown-logout" onClick={signOut}>↪ <span>Esci</span></button></div>}</div></div></header><div className="dashboard"><div className="welcome"><div><p className="eyebrow">Mercoledì, 23 settembre 2026</p><h1>Buongiorno, {user.username} <span>👋</span></h1><p>Qui trovi una panoramica di quello che sta succedendo oggi.</p></div><button className="outline-button">Esporta report <span>↓</span></button></div><div className="metric-grid"><Metric icon="♙" label="Clienti totali" value="1.248" change="+12,5%" tone="violet" /><Metric icon="€" label="Fatturato mensile" value="€ 48.290" change="+8,2%" tone="green" /><Metric icon="◷" label="Attività aperte" value="86" change="-3,1%" tone="orange" negative /><Metric icon="▣" label="Nuovi lead" value="324" change="+18,7%" tone="blue" /></div><div className="dashboard-grid"><section className="card chart-card"><CardTitle title="Andamento fatturato" sub="Entrate degli ultimi 6 mesi" right={<select><option>Ultimi 6 mesi</option><option>Quest’anno</option></select>} /><div className="chart"><div className="chart-y"><span>€50k</span><span>€35k</span><span>€20k</span><span>€0</span></div><div className="chart-area"><div className="grid-lines"><i/><i/><i/><i/></div><svg viewBox="0 0 700 220" preserveAspectRatio="none"><defs><linearGradient id="fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#7357ee" stopOpacity=".26"/><stop offset="1" stopColor="#7357ee" stopOpacity="0"/></linearGradient></defs><path d="M0 178 C65 155 78 168 120 142 S205 148 240 116 S320 135 355 104 S430 92 470 112 S535 57 585 78 S650 45 700 28 V220 H0Z" fill="url(#fill)"/><path d="M0 178 C65 155 78 168 120 142 S205 148 240 116 S320 135 355 104 S430 92 470 112 S535 57 585 78 S650 45 700 28" fill="none" stroke="#7357ee" strokeWidth="3"/></svg><div className="chart-x"><span>Aprile</span><span>Maggio</span><span>Giugno</span><span>Luglio</span><span>Agosto</span><span>Settembre</span></div></div></div></section><section className="card goal-card"><CardTitle title="Obiettivo mensile" sub="Raggiungimento obiettivo" right={<button className="dots">•••</button>} /><div className="goal-ring"><div><strong>78%</strong><span>completato</span></div></div><div className="goal-info"><span><i className="dot purple"/>Fatturato attuale <b>€ 48.290</b></span><span><i className="dot pale"/>Obiettivo <b>€ 62.000</b></span></div></section></div><section className="card activity-card"><CardTitle title="Attività recenti" sub="Gli ultimi aggiornamenti del tuo team" right={<button className="link-button">Vedi tutte →</button>} /><div className="activity-list">{activities.map(([name, action, date, tone]) => <div className="activity-row" key={name}><div className={`activity-avatar ${tone}`}>{name.split(" ").map(x => x[0]).join("")}</div><div className="activity-copy"><strong>{name}</strong><span>{action}</span></div><time>{date}</time><button className="row-menu">•••</button></div>)}</div></section>{user.role === "admin" && <section className="card admin-card"><CardTitle title="Gestione utenti" sub="Aggiungi un membro al workspace" /><form className="user-form" onSubmit={createUser}><input name="username" placeholder="Username" required /><input name="password" type="password" placeholder="Password" required minLength="8" /><select name="role" defaultValue="user"><option value="user">Utente</option><option value="admin">Amministratore</option></select><button type="submit">Crea utente</button></form>{message && <p className="form-message">{message}</p>}<div className="user-list">{users.map(item => <div className="user-row" key={item.id}><span>{item.username} · {item.role}</span>{item.role !== "admin" && <button onClick={async () => { await fetch(`/api/users?id=${item.id}`, { method: "DELETE" }); load(); }}>Elimina</button>}</div>)}</div></section>}</div></section></main>;
 }
+function CardTitle({ title, sub, right }) { return <div className="card-heading"><div><h2>{title}</h2><p>{sub}</p></div>{right}</div>; }
+function Metric({ icon, label, value, change, tone, negative }) { return <div className="metric card"><div className={`metric-icon ${tone}`}>{icon}</div><div><p>{label}</p><strong>{value}</strong><small className={negative ? "down" : "up"}>{change} <span>vs mese scorso</span></small></div></div>; }

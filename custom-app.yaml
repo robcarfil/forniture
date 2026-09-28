@@ -1,13 +1,29 @@
 services:
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: "generapp"
+      MARIADB_USER: "generapp"
+      MARIADB_PASSWORD: "IMPOSTA_PASSWORD_DB"
+      MARIADB_ROOT_PASSWORD: "IMPOSTA_PASSWORD_ROOT_DB"
+    volumes:
+      - "/mnt/ONE-TB/tank/generapp-data:/var/lib/mysql"
   generapp:
-    image: 100.119.243.68:30142/gestore/generapp:1.0.0
+    image: generapp:1.1.0
     restart: unless-stopped
     ports:
-      - "30080:8080"
+      - "30080:3000"
     environment:
       APP_NAME: "GenerApp"
+      DB_HOST: "mariadb"
+      DB_PORT: "3306"
+      DB_USER: "generapp"
+      DB_PASSWORD: "IMPOSTA_PASSWORD_DB"
+      DB_NAME: "generapp"
+      COOKIE_SECURE: "false"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
       interval: 30s
       timeout: 5s
       retries: 3

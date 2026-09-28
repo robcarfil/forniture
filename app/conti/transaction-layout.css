@@ -1,0 +1,3 @@
+.transaction-detail-page .transactions-card{display:contents}
+.transaction-detail-page .transactions-chart-outside{display:block;width:min(100%,1100px);margin:0 auto 20px}
+.transaction-detail-page .transactions-card>.crud-title,.transaction-detail-page .transactions-card>.transaction-filters,.transaction-detail-page .transactions-card>.bulk-assignment,.transaction-detail-page .transactions-card>.transaction-toolbar,.transaction-detail-page .transactions-card>.transaction-scroll,.transaction-detail-page .transactions-card>.pagination{width:min(100%,1100px);margin-left:auto;margin-right:auto}

@@ -94,3 +94,45 @@ Per pubblicarlo:
 3. Aggiorna `image.tag` in `catalog/charts/generapp/1.0.0/values.yaml` e `ix_values.yaml`.
 4. Commit e push del catalogo.
 5. In TrueNAS usa `Refresh Catalog` e poi aggiorna l'app installata.
+
+
+tar --exclude='./.git' \
+    --exclude='./node_modules' \
+    --exclude='./.next' \
+    --exclude='./out' \
+    --exclude='./.DS_Store' \
+    --exclude='./.data' \
+    --exclude='./.env' \
+    --exclude='./generapp-truenas-*.tar' \
+    -cf generapp-truenas-1.3.2.tar .
+
+ls -lh generapp-truenas-1.3.2.tar
+
+scp /Users/robertoformentin/ProgettoQuasar/generapp/generapp-truenas-1.3.3.tar \
+admin@100.119.243.68:/mnt/ONE-TB/tank/projects/
+
+### Deploy automatico in produzione
+
+Lo script sostituisce il codice nella directory remota, preserva il file `.env`
+di produzione e ricrea i container con Docker Compose:
+
+```bash
+chmod +x scripts/deploy-production.sh
+./scripts/deploy-production.sh 1.3.6
+```
+
+Per usare un altro server o una directory diversa:
+
+```bash
+DEPLOY_HOST=admin@HOST DEPLOY_DIR=/percorso/generapp ./scripts/deploy-production.sh 1.3.6
+```
+
+Se non usi una chiave SSH, puoi passare la password tramite `sshpass`:
+
+```bash
+brew install hudochenkov/sshpass/sshpass
+DEPLOY_PASSWORD='la-password' ./scripts/deploy-production.sh 1.3.6
+```
+
+È preferibile usare una chiave SSH, perché la password può restare nella
+cronologia della shell se viene scritta direttamente nella stessa riga.

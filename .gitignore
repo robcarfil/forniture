@@ -2,4 +2,6 @@ node_modules
 .next
 out
 .DS_Store
+.data
+.env
 npm-debug.log*

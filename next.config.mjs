@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  output: "standalone",
+  experimental: { serverComponentsExternalPackages: ["better-sqlite3"] },
   trailingSlash: true,
   images: {
     unoptimized: true
