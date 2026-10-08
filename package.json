@@ -6,13 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "import-consumi": "node scripts/import_consumptions.js",
+    "lint": "next lint",
+    "db:init": "node scripts/init-db.mjs",
+    "generate:invoice-fixtures": "node scripts/generate-invoice-fixtures.mjs",
+    "test:invoice-parser": "node scripts/test-invoice-parser.mjs",
+    "version:show": "node -p \"require('./package.json').version\""
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
+    "chart.js": "^4.4.0",
     "mysql2": "^3.14.1",
     "next": "14.2.15",
+    "pdfjs-dist": "^6.4.299",
     "react": "18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "18.3.1",
     "xlsx": "^0.18.5"
   },

@@ -1,0 +1,27 @@
+{
+  "enel-sample.pdf": {
+    "template": "enel-energia",
+    "providerName": "ENEL ENERGIA",
+    "invoiceNumber": "2024/12345",
+    "issueDate": "2024-04-12",
+    "dueDate": "2024-05-12",
+    "amount": 245.5,
+    "supplierName": "ENEL ENERGIA"
+  },
+  "a2a-sample.pdf": {
+    "template": "a2a",
+    "providerName": "A2A ENERGIA",
+    "invoiceNumber": "2024/98765",
+    "issueDate": "2024-01-03",
+    "amount": 189.9,
+    "supplierName": "A2A ENERGIA"
+  },
+  "generic-sample.pdf": {
+    "template": "generic-italian",
+    "providerName": "",
+    "invoiceNumber": "FR-2401",
+    "issueDate": "2024-02-09",
+    "amount": 875,
+    "supplierName": "SOCIETA FORNITRICE SRL"
+  }
+}

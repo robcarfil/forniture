@@ -8,15 +8,15 @@ ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
 RUN apk add --no-cache python3 make g++
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build
 
 FROM node:20-alpine AS runtime
 
-LABEL org.opencontainers.image.title="GenerApp"
-LABEL org.opencontainers.image.description="GenerApp with authentication and user management"
+LABEL org.opencontainers.image.title="Forniture"
+LABEL org.opencontainers.image.description="Forniture with authentication and user management"
 LABEL org.opencontainers.image.version="1.3.3"
 
 WORKDIR /app

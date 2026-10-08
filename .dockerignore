@@ -5,3 +5,6 @@ npm-debug.log
 Dockerfile
 catalog
 README.md
+._*
+.DS_Store
+.AppleDouble

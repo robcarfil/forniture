@@ -1,0 +1,175 @@
+{
+  "invoiceId": "test-invoice",
+  "baseDate": "2026-09-28",
+  "parsedCount": 28,
+  "rows": [
+    {
+      "readingDate": "2026-09-28",
+      "consumption": 0,
+      "slot": "00",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-01",
+      "consumption": 0.369,
+      "slot": "0.369",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-02",
+      "consumption": 0.328,
+      "slot": "0.328",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-03",
+      "consumption": 0.692,
+      "slot": "0.692",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-04",
+      "consumption": 0.334,
+      "slot": "0.334",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-05",
+      "consumption": 0.33,
+      "slot": "0.33",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-06",
+      "consumption": 0.212,
+      "slot": "0.212",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-07",
+      "consumption": 0.42,
+      "slot": "0.42",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-08",
+      "consumption": 0.401,
+      "slot": "0.401",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-09",
+      "consumption": 0.196,
+      "slot": "0.196",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-10",
+      "consumption": 0.286,
+      "slot": "0.286",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-11",
+      "consumption": 0.51,
+      "slot": "0.51",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-12",
+      "consumption": 0.259,
+      "slot": "0.259",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-13",
+      "consumption": 0.171,
+      "slot": "0.171",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-14",
+      "consumption": 0.573,
+      "slot": "0.573",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-15",
+      "consumption": 0.169,
+      "slot": "0.169",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-16",
+      "consumption": 0.472,
+      "slot": "0.472",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-17",
+      "consumption": 0.154,
+      "slot": "0.154",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-18",
+      "consumption": 0.45,
+      "slot": "0.45",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-19",
+      "consumption": 0.15,
+      "slot": "0.15",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-20",
+      "consumption": 0.139,
+      "slot": "0.139",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-21",
+      "consumption": 0.142,
+      "slot": "0.142",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-22",
+      "consumption": 0.164,
+      "slot": "0.164",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-23",
+      "consumption": 0.128,
+      "slot": "0.128",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-24",
+      "consumption": 0.158,
+      "slot": "0.158",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-25",
+      "consumption": 0.217,
+      "slot": "0.217",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-26",
+      "consumption": 0.162,
+      "slot": "0.162",
+      "notes": ""
+    },
+    {
+      "readingDate": "2026-09-27",
+      "consumption": 0.205,
+      "slot": "0.205",
+      "notes": ""
+    }
+  ]
+}

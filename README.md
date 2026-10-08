@@ -4,11 +4,97 @@ Web app Next.js esportata come sito statico e servita da Nginx. Il repository
 include un chart Helm e una struttura catalogo compatibile con TrueNAS SCALE
 per installazioni che supportano cataloghi Kubernetes/Helm.
 
+## Versione applicazione
+
+La versione dell'app è centralizzata in `package.json` e resa disponibile anche via API:
+
+```bash
+npm run version:show
+curl http://localhost:30090/api/version
+```
+
+Quando vuoi pubblicare una nuova release, aggiorna prima la versione in `package.json` e poi usa lo stesso valore anche come build arg in Docker/Compose.
+
+## Inizializzazione database
+
+Il database MySQL viene creato e inizializzato con lo script dedicato:
+
+```bash
+docker compose up -d mariadb
+npm run db:init
+```
+
+Lo script crea le tabelle principali del sistema e poi puoi creare il primo amministratore tramite l'endpoint di setup:
+
+```bash
+curl -X POST http://localhost:30090/api/auth/setup \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Password123!"}'
+```
+
+L'endpoint crea il primo admin solo se il database è ancora vuoto.
+
+## Sviluppo locale con hot reload
+
+Per lavorare sul codice senza ricostruire manualmente l'immagine, usa il compose dedicato allo sviluppo:
+
+```bash
+docker compose -f docker-compose.dev.yaml up --build
+```
+
+Questo monta la cartella del progetto dentro il container e lancia `next dev`, così ogni modifica ai file viene rilevata automaticamente senza fare `npm run build` a mano.
+
+## Parser fatture personalizzati
+
+L'app include un framework base per parsare PDF di fatture in modo riutilizzabile e facilmente estendibile: `lib/invoice-parsers.js` e le route `POST /api/invoices/parse` / `POST /api/fatture/parse`.
+
+Il flusso è:
+
+1. estrae il testo dal PDF
+2. rileva il template più probabile o il parser dedicato al fornitore
+3. applica regole di matching per numero fattura, data, importo, IVA e fornitore
+4. restituisce un JSON strutturato con `template`, `confidence` e `fields`
+5. nella pagina `Fatture forniture` il file caricato viene analizzato e i campi rilevati vengono precompilati nel form e poi salvati direttamente nella tabella `supply_invoices`
+
+I parser sono centralizzati in un registry in `lib/invoice-parsers.js`, così è semplice aggiungere un parser custom per ogni fornitore e raffinarlo con nuove regole in base ai PDF reali ricevuti.
+
+Esempio di chiamata:
+
+```bash
+curl -X POST http://localhost:30090/api/invoices/parse \
+  -H "Cookie: generapp_session=..." \
+  -F "file=@example-fattura.pdf"
+```
+
+Per generare un set di fixture PDF di prova e usarle come baseline di regressione:
+
+```bash
+npm run generate:invoice-fixtures
+```
+
+Per verificare la regressione del parser con fixture PDF e valori attesi:
+
+```bash
+npm run test:invoice-parser
+```
+
+Per raffinire il parser in modo sicuro:
+
+1. raccogli un campione di PDF reali per ogni fornitore o layout;
+2. apri `Fornitori → Parser` e carica il PDF campione reale;
+3. mappa visivamente i campi principali sul documento e salva coordinate + regex;
+4. inserisci i valori attesi per validare automaticamente il campione (`expected`);
+5. usa `Confronta fixture` per verificare se output reale e atteso coincidono;
+6. aggiungi nuove regole o correzioni solo se il confronto evidenzia differenze;
+7. versiona il parser e mantieni fixture di regressione per evitare regressioni future.
+
+Questo permette di creare più parser specializzati su diversi PDF, senza affidarsi a un unico parser generico per tutti i fornitori.
+
 ## Build immagine
 
 ```bash
-docker build -t 100.119.243.68:30142/gestore/generapp:1.0.0 .
-docker push 100.119.243.68:30142/gestore/generapp:1.0.0
+docker build --build-arg APP_VERSION=$(node -p "require('./package.json').version") -t 100.119.243.68:30142/gestore/generapp:$(node -p "require('./package.json').version") .
+docker push 100.119.243.68:30142/gestore/generapp:$(node -p "require('./package.json').version")
 ```
 
 ## Test locale

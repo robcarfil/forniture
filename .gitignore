@@ -2,6 +2,8 @@ node_modules
 .next
 out
 .DS_Store
+.AppleDouble
+._*
 .data
 .env
 npm-debug.log*
